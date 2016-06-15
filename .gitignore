@@ -48,6 +48,8 @@ local.properties
 
 # IntelliJ
 *.iml
+*.ipr
+*.iws
 .idea
 
 #jrebel
