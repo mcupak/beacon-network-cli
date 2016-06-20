@@ -51,7 +51,7 @@ class BeaconsSuccessTest extends BaseCliTest {
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def beacons = JsonHelper.readCollection(clientOutput, BeaconDto.class)
 
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             assertThat(beacons).isEqualTo(TestData.TEST_BEACONS)
         }
         assertExitValueIsSuccessful(clientExitValue)

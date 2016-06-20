@@ -51,7 +51,7 @@ class OrganizationsSuccessTest extends BaseCliTest {
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def organizations = JsonHelper.readCollection(clientOutput, OrganizationDto.class)
 
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             assertThat(organizations).isEqualTo(TEST_ORGANIZATIONS)
         }
         assertExitValueIsSuccessful(clientExitValue)

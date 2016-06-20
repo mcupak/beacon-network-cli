@@ -51,7 +51,7 @@ class OrganizationSuccessTest extends BaseCliTest {
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def organization = Json.read(clientOutput, OrganizationDto)
 
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             assertThat(organization).isEqualTo(TEST_ORGANIZATION_AMPLAB)
         }
         assertExitValueIsSuccessful(clientExitValue)

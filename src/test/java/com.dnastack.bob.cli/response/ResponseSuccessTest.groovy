@@ -61,7 +61,7 @@ class ResponseSuccessTest extends BaseCliTest {
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def response = Json.read(clientOutput, BeaconResponseDto)
 
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             assertThat(response).isEqualTo(TEST_RESPONSE_AMPLAB)
         }
         assertExitValueIsSuccessful(clientExitValue)

@@ -46,50 +46,48 @@ abstract class BaseCliTest {
     ]
     static final def MOCK_BOB_PORT = 8089
     static final def MOCK_BOB_SERVER = new WireMockServer(wireMockConfig().port(MOCK_BOB_PORT))
-    static boolean mockedTesting
+    static boolean MOCKED_TESTING
+
+    /**
+     * Define if the testing will be against real Beacon Network server, or the mocked one.
+     */
+    static {
+        def beaconNetworkTestUrl = System.properties.getProperty("beaconNetwork.test.url")
+        MOCKED_TESTING = StringUtils.isBlank(beaconNetworkTestUrl)
+        CLI_PROCESS_BUILDER_DEFAULTS.add(MOCKED_TESTING ?
+                new URL("http", "localhost", MOCK_BOB_PORT, "").toString() :
+                beaconNetworkTestUrl
+        )
+    }
 
     @BeforeSuite
     void startServer() {
-        def beaconNetworkTestUrl = System.properties.getProperty("beaconNetwork.test.url")
-        if (StringUtils.isNotBlank(beaconNetworkTestUrl)) {
-            setupIntegrationTests(beaconNetworkTestUrl)
-        } else {
-            setupMockedTests()
+        if (MOCKED_TESTING) {
+            MOCK_BOB_SERVER.start()
         }
-    }
-
-    static void setupIntegrationTests(String beaconNetworkTestUrl) {
-        mockedTesting = false
-        CLI_PROCESS_BUILDER_DEFAULTS.add(beaconNetworkTestUrl)
-    }
-
-    static void setupMockedTests() {
-        mockedTesting = true
-        CLI_PROCESS_BUILDER_DEFAULTS.add(new URL("http", "localhost", MOCK_BOB_PORT, "").toString())
-        MOCK_BOB_SERVER.start();
     }
 
     @AfterSuite
     void stopServer() {
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             MOCK_BOB_SERVER.stop();
         }
     }
 
     @AfterMethod
     void resetMappings() {
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             MOCK_BOB_SERVER.resetMappings();
         }
     }
 
     @Test
     void test() {
-        if (!mockedTesting && !isIntegrationTestingSupported()) {
+        if (!MOCKED_TESTING && !isIntegrationTestingSupported()) {
             return
         }
 
-        if (mockedTesting) {
+        if (MOCKED_TESTING) {
             setupMappings()
         }
         def executionResult = executeClientAndCollectOutput()
