@@ -43,6 +43,7 @@
         <version.commons.lang>3.2.1</version.commons.lang>
         <version.wiremock>1.58</version.wiremock>
         <version.assembly>2.6</version.assembly>
+        <version.surfire>2.19.1</version.surfire>
         <beaconNetwork.test.url/>
     </properties>
 
@@ -208,7 +209,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>${version.surfire}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <beaconNetwork.test.url>${beaconNetwork.test.url}</beaconNetwork.test.url>
