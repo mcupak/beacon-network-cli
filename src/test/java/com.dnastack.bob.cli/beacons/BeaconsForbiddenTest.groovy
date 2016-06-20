@@ -16,9 +16,10 @@
 
 package com.dnastack.bob.cli.beacons
 
-import com.dnastack.bob.cli.BaseMockedCliTest
+import com.dnastack.bob.cli.BaseCliTest
 import com.dnastack.bob.cli.TestData
-import com.dnastack.bob.cli.commands.BeaconsCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconGetAllCommand
 import com.github.tomakehurst.wiremock.common.Json
 import org.apache.http.HttpStatus
 
@@ -30,10 +31,10 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class BeaconsForbiddenTest extends BaseMockedCliTest {
+class BeaconsForbiddenTest extends BaseCliTest {
     @Override
     void setupMappings() {
-        BaseMockedCliTest.MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH"))
+        MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH"))
 
                 .willReturn(aResponse()
                 .withStatus(HttpStatus.SC_FORBIDDEN)
@@ -41,13 +42,19 @@ class BeaconsForbiddenTest extends BaseMockedCliTest {
     }
 
     @Override
+    boolean isIntegrationTestingSupported() {
+        return false
+    }
+
+    @Override
     String[] getClientTestArguments() {
-        return [BeaconsCommand.NAME]
+        return [BeaconCommand.NAME,
+                BeaconGetAllCommand.NAME]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        assertThat(clientErrorOutput?.trim()).isEqualTo(TestData.TEST_ERROR_FORBIDDEN.getMessage())
+        assertThat(clientErrorOutput?.trim()).isEqualTo(TestData.TEST_ERROR_FORBIDDEN.message)
         assertExitValueIsError(clientExitValue)
     }
 }

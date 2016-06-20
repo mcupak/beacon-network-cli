@@ -19,7 +19,7 @@ public class Cli {
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             printMainHelp();
-            exitWithSuccessfulResult();
+            exitWithError();
         } else {
             CommandLine commandLine = parseCommandLineArguments(args);
             String result = executeCommands(commandLine);
@@ -28,8 +28,9 @@ public class Cli {
     }
 
     private static void printMainHelp() {
-        System.out.println("Beacon Network CLI Usage:");
-        new CmdLineParser(new CommandLine()).printUsage(System.out);
+        CommandLine helpRequestedCommandLine = CommandLine.builder().showHelp(true).build();
+        String help = executeCommands(helpRequestedCommandLine);
+        System.out.println(help);
     }
 
     private static CommandLine parseCommandLineArguments(String[] args) {
@@ -37,7 +38,6 @@ public class Cli {
         try {
             new CmdLineParser(commandLine).parseArgument(args);
         } catch (CmdLineException e) {
-            printMainHelp();
             exitWithError(e.getMessage());
         }
         return commandLine;
@@ -55,12 +55,16 @@ public class Cli {
     }
 
     private static void exitWithError(String message) {
-        System.err.print(message);
+        System.err.println(message);
+        exitWithError();
+    }
+
+    private static void exitWithError() {
         System.exit(1);
     }
 
     private static void exitWithSuccessfulResult(String result) {
-        System.out.print(result);
+        System.out.println(result);
         exitWithSuccessfulResult();
     }
 

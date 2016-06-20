@@ -16,9 +16,10 @@
 
 package com.dnastack.bob.cli.beacons
 
-import com.dnastack.bob.cli.BaseMockedCliTest
+import com.dnastack.bob.cli.BaseCliTest
 import com.dnastack.bob.cli.TestData
-import com.dnastack.bob.cli.commands.BeaconsCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconGetAllCommand
 import com.dnastack.bob.cli.utils.JsonHelper
 import com.dnastack.bob.service.dto.BeaconDto
 import com.github.tomakehurst.wiremock.common.Json
@@ -31,10 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class BeaconsSuccessTest extends BaseMockedCliTest {
+class BeaconsSuccessTest extends BaseCliTest {
     @Override
     void setupMappings() {
-        BaseMockedCliTest.MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH"))
+        MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH"))
 
                 .willReturn(aResponse()
                 .withBody(Json.write(TestData.TEST_BEACONS))))
@@ -42,14 +43,17 @@ class BeaconsSuccessTest extends BaseMockedCliTest {
 
     @Override
     String[] getClientTestArguments() {
-        return [BeaconsCommand.NAME]
+        return [BeaconCommand.NAME,
+                BeaconGetAllCommand.NAME]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def beacons = JsonHelper.readCollection(clientOutput, BeaconDto.class)
-        assertThat(beacons).isEqualTo(TestData.TEST_BEACONS)
 
+        if (mockedTesting) {
+            assertThat(beacons).isEqualTo(TestData.TEST_BEACONS)
+        }
         assertExitValueIsSuccessful(clientExitValue)
     }
 }

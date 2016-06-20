@@ -16,13 +16,14 @@
 
 package com.dnastack.bob.cli.organizations
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.OrganizationsCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.organization.OrganizationCommand
+import com.dnastack.bob.cli.commands.organization.OrganizationGetAllCommand
 import com.dnastack.bob.cli.utils.JsonHelper
 import com.dnastack.bob.service.dto.OrganizationDto
 import com.github.tomakehurst.wiremock.common.Json
 
-import static com.dnastack.bob.cli.TestData.getTEST_ORGANIZATIONS
+import static com.dnastack.bob.cli.TestData.TEST_ORGANIZATIONS
 import static com.dnastack.bob.client.BeaconNetworkRetroService.ORGANIZATIONS_PATH
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -31,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class OrganizationsSuccessTest extends BaseMockedCliTest {
+class OrganizationsSuccessTest extends BaseCliTest {
     @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$ORGANIZATIONS_PATH"))
@@ -42,14 +43,17 @@ class OrganizationsSuccessTest extends BaseMockedCliTest {
 
     @Override
     String[] getClientTestArguments() {
-        return [OrganizationsCommand.NAME]
+        return [OrganizationCommand.NAME,
+                OrganizationGetAllCommand.NAME]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def organizations = JsonHelper.readCollection(clientOutput, OrganizationDto.class)
-        assertThat(organizations).isEqualTo(TEST_ORGANIZATIONS)
 
+        if (mockedTesting) {
+            assertThat(organizations).isEqualTo(TEST_ORGANIZATIONS)
+        }
         assertExitValueIsSuccessful(clientExitValue)
     }
 }

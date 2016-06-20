@@ -16,8 +16,9 @@
 
 package com.dnastack.bob.cli.organizations
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.OrganizationsCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.organization.OrganizationCommand
+import com.dnastack.bob.cli.commands.organization.OrganizationGetAllCommand
 import com.github.tomakehurst.wiremock.common.Json
 import org.apache.http.HttpStatus
 
@@ -30,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class OrganizationsForbiddenTest extends BaseMockedCliTest {
+class OrganizationsForbiddenTest extends BaseCliTest {
     @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$ORGANIZATIONS_PATH"))
@@ -41,13 +42,19 @@ class OrganizationsForbiddenTest extends BaseMockedCliTest {
     }
 
     @Override
+    boolean isIntegrationTestingSupported() {
+        return false
+    }
+
+    @Override
     String[] getClientTestArguments() {
-        return [OrganizationsCommand.NAME]
+        return [OrganizationCommand.NAME,
+                OrganizationGetAllCommand.NAME]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.getMessage())
+        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.message)
         assertExitValueIsError(clientExitValue)
     }
 }

@@ -33,6 +33,7 @@ public abstract class Command {
     protected String getHelp() {
         StringWriter help = new StringWriter();
         help.append(String.format("Description: %s\r\n", getDescription()));
+        help.append("Usage:\r\n");
         new CmdLineParser(this).printUsage(help, null);
         return help.toString();
     }

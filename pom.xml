@@ -43,7 +43,17 @@
         <version.commons.lang>3.2.1</version.commons.lang>
         <version.wiremock>1.58</version.wiremock>
         <version.assembly>2.6</version.assembly>
+        <beaconNetwork.test.url/>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <properties>
+                <beaconNetwork.test.url>https://beacon-network.org/api/</beaconNetwork.test.url>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -194,6 +204,16 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <beaconNetwork.test.url>${beaconNetwork.test.url}</beaconNetwork.test.url>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>

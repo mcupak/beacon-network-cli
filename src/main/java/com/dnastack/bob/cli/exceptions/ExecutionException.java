@@ -25,6 +25,10 @@ import com.dnastack.bob.cli.commands.Command;
  * @version 1.0
  */
 public class ExecutionException extends Exception {
+    public ExecutionException(String message) {
+        super(message);
+    }
+
     public ExecutionException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -16,14 +16,15 @@
 
 package com.dnastack.bob.cli.responses
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.ResponsesCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.response.ResponseCommand
+import com.dnastack.bob.cli.commands.response.ResponseGetAllCommand
 import com.dnastack.bob.cli.utils.JsonHelper
 import com.dnastack.bob.client.CommunicationConverter
 import com.dnastack.bob.service.dto.BeaconResponseDto
 import com.github.tomakehurst.wiremock.common.Json
 
-import static com.dnastack.bob.cli.TestData.TEST_RESPONSES
+import static com.dnastack.bob.cli.ITTestData.TEST_RESPONSES
 import static com.dnastack.bob.client.BeaconNetworkRetroService.*
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class ResponsesSuccessTest extends BaseMockedCliTest {
+class ResponsesSuccessTest extends BaseCliTest {
     @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlPathEqualTo("/$RESPONSES_PATH"))
@@ -49,21 +50,23 @@ class ResponsesSuccessTest extends BaseMockedCliTest {
 
     @Override
     String[] getClientTestArguments() {
-        return [ResponsesCommand.NAME,
-                "-c", TEST_RESPONSES.query.first().chromosome.toString(),
-                "-p", TEST_RESPONSES.query.first().position.toString(),
-                "-a", TEST_RESPONSES.query.first().allele,
-                "-r", TEST_RESPONSES.query.first().reference.toString(),
-                "-i", TEST_RESPONSES.beacon.id.join(",")
+        return [ResponseCommand.NAME,
+                ResponseGetAllCommand.NAME,
+                ResponseGetAllCommand.CHROMOSOME_OPTION_KEY, TEST_RESPONSES.query.first().chromosome.toString(),
+                ResponseGetAllCommand.POSITION_OPTION_KEY, TEST_RESPONSES.query.first().position.toString(),
+                ResponseGetAllCommand.ALLELE_OPTION_KEY, TEST_RESPONSES.query.first().allele,
+                ResponseGetAllCommand.REFERENCE_OPTION_KEY, TEST_RESPONSES.query.first().reference.toString(),
+                ResponseGetAllCommand.BEACONS_IDS_OPTION_KEY, TEST_RESPONSES.beacon.id.join(",")
         ]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        println clientErrorOutput
         def responses = JsonHelper.readCollection(clientOutput, BeaconResponseDto.class)
-        assertThat(responses).isEqualTo(TEST_RESPONSES)
 
+        if (mockedTesting) {
+            assertThat(responses).isEqualTo(TEST_RESPONSES)
+        }
         assertExitValueIsSuccessful(clientExitValue)
     }
 }

@@ -1,0 +1,11 @@
+{
+  "id": "amplab",
+  "name": "AMPLab - 1000 Genomes Project",
+  "organization": "AMPLab, UC Berkeley",
+  "createdDate": "2014-03-20",
+  "supportedReferences": [
+    "HG18",
+    "HG19",
+    "HG38"
+  ]
+}

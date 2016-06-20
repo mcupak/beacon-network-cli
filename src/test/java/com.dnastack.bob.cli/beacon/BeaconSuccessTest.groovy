@@ -16,12 +16,13 @@
 
 package com.dnastack.bob.cli.beacon
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.BeaconCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.beacon.BeaconCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconGetCommand
 import com.dnastack.bob.service.dto.BeaconDto
 import com.github.tomakehurst.wiremock.common.Json
 
-import static com.dnastack.bob.cli.TestData.TEST_BEACON_AMPLAB
+import static com.dnastack.bob.cli.ITTestData.TEST_BEACON_AMPLAB
 import static com.dnastack.bob.client.BeaconNetworkRetroService.BEACONS_PATH
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -30,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class BeaconSuccessTest extends BaseMockedCliTest {
+class BeaconSuccessTest extends BaseCliTest {
     @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH/$TEST_BEACON_AMPLAB.id"))
@@ -41,14 +42,16 @@ class BeaconSuccessTest extends BaseMockedCliTest {
 
     @Override
     String[] getClientTestArguments() {
-        return [BeaconCommand.NAME, "-i", TEST_BEACON_AMPLAB.id]
+        return [BeaconCommand.NAME,
+                BeaconGetCommand.NAME,
+                BeaconGetCommand.BEACON_ID_OPTION_KEY, TEST_BEACON_AMPLAB.id]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def beacon = Json.read(clientOutput, BeaconDto)
-        assertThat(beacon).isEqualTo(TEST_BEACON_AMPLAB)
 
+        assertThat(beacon).isEqualTo(TEST_BEACON_AMPLAB)
         assertExitValueIsSuccessful(clientExitValue)
     }
 }

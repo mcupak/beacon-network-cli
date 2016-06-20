@@ -16,13 +16,14 @@
 
 package com.dnastack.bob.cli.organization
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.OrganizationCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.organization.OrganizationCommand
+import com.dnastack.bob.cli.commands.organization.OrganizationGetCommand
 import com.github.tomakehurst.wiremock.common.Json
 import org.apache.http.HttpStatus
 
+import static com.dnastack.bob.cli.ITTestData.TEST_ORGANIZATION_AMPLAB
 import static com.dnastack.bob.cli.TestData.TEST_ERROR_FORBIDDEN
-import static com.dnastack.bob.cli.TestData.TEST_ORGANIZATION_AMPLAB
 import static com.dnastack.bob.client.BeaconNetworkRetroService.ORGANIZATIONS_PATH
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -31,7 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class OrganizationForbiddenTest extends BaseMockedCliTest {
+class OrganizationForbiddenTest extends BaseCliTest {
+    @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$ORGANIZATIONS_PATH/$TEST_ORGANIZATION_AMPLAB.id"))
 
@@ -41,13 +43,20 @@ class OrganizationForbiddenTest extends BaseMockedCliTest {
     }
 
     @Override
+    boolean isIntegrationTestingSupported() {
+        return false
+    }
+
+    @Override
     String[] getClientTestArguments() {
-        return [OrganizationCommand.NAME, "-i", TEST_ORGANIZATION_AMPLAB.id]
+        return [OrganizationCommand.NAME,
+                OrganizationGetCommand.NAME,
+                OrganizationGetCommand.ORGANIZATION_ID_OPTION_KEY, TEST_ORGANIZATION_AMPLAB.id]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.getMessage())
+        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.message)
         assertExitValueIsError(clientExitValue)
     }
 }

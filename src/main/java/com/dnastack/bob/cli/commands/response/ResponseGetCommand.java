@@ -14,8 +14,9 @@
  *  limitations under the License.
  */
 
-package com.dnastack.bob.cli.commands;
+package com.dnastack.bob.cli.commands.response;
 
+import com.dnastack.bob.cli.commands.Command;
 import com.dnastack.bob.cli.converters.EnumByIdOptionHandler;
 import com.dnastack.bob.cli.exceptions.ExecutionException;
 import com.dnastack.bob.cli.utils.Json;
@@ -27,55 +28,58 @@ import com.dnastack.bob.service.dto.AlleleDto;
 import com.dnastack.bob.service.dto.BeaconResponseDto;
 import com.dnastack.bob.service.dto.ChromosomeDto;
 import com.dnastack.bob.service.dto.ReferenceDto;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.kohsuke.args4j.Option;
 
-import java.util.List;
-
 /**
- * Stores parameters and actually executes the responses command.
+ * Stores parameters and actually queries the beacon.
  *
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class ResponsesCommand extends Command {
-    public static final String NAME = "responses";
+public class ResponseGetCommand extends Command {
+    public static final String NAME = "get";
 
-    @Option(name = "-c", aliases = "--chromosome", required = true, handler = EnumByIdOptionHandler.class,
+    public static final String CHROMOSOME_OPTION_KEY = "-c";
+    public static final String POSITION_OPTION_KEY = "-p";
+    public static final String ALLELE_OPTION_KEY = "-a";
+    public static final String REFERENCE_OPTION_KEY = "-r";
+    public static final String BEACON_ID_OPTION_KEY = "-i";
+
+    @Option(name = CHROMOSOME_OPTION_KEY, aliases = "--chromosome", required = true, handler = EnumByIdOptionHandler.class,
             usage = "Chromosome")
     private ChromosomeDto chromosome;
 
-    @Option(name = "-p", aliases = "--position", required = true, usage = "Position")
+    @Option(name = POSITION_OPTION_KEY, aliases = "--position", required = true, usage = "Position")
     private Long position;
 
-    @Option(name = "-a", aliases = "--allele", required = true, handler = EnumByIdOptionHandler.class, usage = "Allele")
+    @Option(name = ALLELE_OPTION_KEY, aliases = "--allele", required = true, handler = EnumByIdOptionHandler.class,
+            usage = "Allele")
     private AlleleDto allele;
 
-    @Option(name = "-r", aliases = "--reference", required = true, handler = EnumByIdOptionHandler.class,
+    @Option(name = REFERENCE_OPTION_KEY, aliases = "--reference", required = true, handler = EnumByIdOptionHandler.class,
             usage = "Reference")
     private ReferenceDto reference;
 
-    @Option(name = "-i", aliases = "--ids",
-            usage = "Ids of beacons to request. If not specified, all beacons will be requested. Example: amplab,hgmd")
-    private List<String> beaconsIds;
+    @Option(name = BEACON_ID_OPTION_KEY, aliases = "--id", required = true, usage = "Beacon ID")
+    private String beaconId;
 
     @Override
     public String doExecute(BeaconNetworkClient beaconNetworkClient) throws ExecutionException {
-        List<BeaconResponseDto> response;
+        BeaconResponseDto response = getBeaconResponse(beaconNetworkClient);
+        return Json.pretty(response);
+    }
+
+    private BeaconResponseDto getBeaconResponse(BeaconNetworkClient beaconNetworkClient) throws ExecutionException {
         try {
-            response = beaconNetworkClient.getResponses(chromosome, position, allele, reference, beaconsIds);
+            return beaconNetworkClient.getResponse(chromosome, position, allele, reference, beaconId);
         } catch (ForbiddenException | InternalException | NotFoundException e) {
             throw new ExecutionException(e.getMessage(), e);
         }
-        return Json.pretty(response);
     }
 
     @Override
     public String getDescription() {
-        return "Requests beacons information on the specified genetic mutation.\r\n" +
+        return "Requests beacon information on the specified genetic mutation.\r\n" +
                 "Beacon.response = true, when the response is YES.\r\n" +
                 "Beacon.response = false or null, when the response is NO, or the beacon had problems answering the query.";
     }

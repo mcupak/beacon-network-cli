@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class JsonHelper {
+public class JsonHelper {
     public static <T> List<T> readCollection(String json, Class<T> clazz) {
         def mapper = new ObjectMapper()
         return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, clazz));

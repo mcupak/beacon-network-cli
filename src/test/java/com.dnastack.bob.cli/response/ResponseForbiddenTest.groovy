@@ -16,13 +16,14 @@
 
 package com.dnastack.bob.cli.response
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.ResponseCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.response.ResponseCommand
+import com.dnastack.bob.cli.commands.response.ResponseGetCommand
 import com.github.tomakehurst.wiremock.common.Json
 import org.apache.http.HttpStatus
 
-import static com.dnastack.bob.cli.TestData.getTEST_ERROR_FORBIDDEN
-import static com.dnastack.bob.cli.TestData.getTEST_RESPONSE_AMPLAB
+import static com.dnastack.bob.cli.ITTestData.TEST_RESPONSE_AMPLAB
+import static com.dnastack.bob.cli.TestData.TEST_ERROR_FORBIDDEN
 import static com.dnastack.bob.client.BeaconNetworkRetroService.*
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -31,7 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class ResponseForbiddenTest extends BaseMockedCliTest {
+class ResponseForbiddenTest extends BaseCliTest {
+    @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlPathEqualTo("/$RESPONSES_PATH/$TEST_RESPONSE_AMPLAB.beacon.id"))
                 .withQueryParam(CHROMOSOME_KEY, equalTo(TEST_RESPONSE_AMPLAB.query.chromosome.toString()))
@@ -45,19 +47,25 @@ class ResponseForbiddenTest extends BaseMockedCliTest {
     }
 
     @Override
+    boolean isIntegrationTestingSupported() {
+        return false
+    }
+
+    @Override
     String[] getClientTestArguments() {
         return [ResponseCommand.NAME,
-                "-c", TEST_RESPONSE_AMPLAB.query.chromosome.toString(),
-                "-p", TEST_RESPONSE_AMPLAB.query.position.toString(),
-                "-a", TEST_RESPONSE_AMPLAB.query.allele,
-                "-r", TEST_RESPONSE_AMPLAB.query.reference,
-                "-i", TEST_RESPONSE_AMPLAB.beacon.id
+                ResponseGetCommand.NAME,
+                ResponseGetCommand.CHROMOSOME_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.chromosome.toString(),
+                ResponseGetCommand.POSITION_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.position.toString(),
+                ResponseGetCommand.ALLELE_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.allele,
+                ResponseGetCommand.REFERENCE_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.reference,
+                ResponseGetCommand.BEACON_ID_OPTION_KEY, TEST_RESPONSE_AMPLAB.beacon.id
         ]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.getMessage())
+        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.message)
         assertExitValueIsError(clientExitValue)
     }
 }

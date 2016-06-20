@@ -16,12 +16,13 @@
 
 package com.dnastack.bob.cli.response
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.ResponseCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.response.ResponseCommand
+import com.dnastack.bob.cli.commands.response.ResponseGetCommand
 import com.dnastack.bob.service.dto.BeaconResponseDto
 import com.github.tomakehurst.wiremock.common.Json
 
-import static com.dnastack.bob.cli.TestData.TEST_RESPONSE_AMPLAB
+import static com.dnastack.bob.cli.ITTestData.TEST_RESPONSE_AMPLAB
 import static com.dnastack.bob.client.BeaconNetworkRetroService.*
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -30,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class ResponseSuccessTest extends BaseMockedCliTest {
+class ResponseSuccessTest extends BaseCliTest {
     @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlPathEqualTo("/$RESPONSES_PATH/$TEST_RESPONSE_AMPLAB.beacon.id"))
@@ -47,19 +48,22 @@ class ResponseSuccessTest extends BaseMockedCliTest {
     @Override
     String[] getClientTestArguments() {
         return [ResponseCommand.NAME,
-                "-c", TEST_RESPONSE_AMPLAB.query.chromosome.toString(),
-                "-p", TEST_RESPONSE_AMPLAB.query.position.toString(),
-                "-a", TEST_RESPONSE_AMPLAB.query.allele,
-                "-r", TEST_RESPONSE_AMPLAB.query.reference,
-                "-i", TEST_RESPONSE_AMPLAB.beacon.id
+                ResponseGetCommand.NAME,
+                ResponseGetCommand.CHROMOSOME_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.chromosome.toString(),
+                ResponseGetCommand.POSITION_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.position.toString(),
+                ResponseGetCommand.ALLELE_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.allele,
+                ResponseGetCommand.REFERENCE_OPTION_KEY, TEST_RESPONSE_AMPLAB.query.reference,
+                ResponseGetCommand.BEACON_ID_OPTION_KEY, TEST_RESPONSE_AMPLAB.beacon.id
         ]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
         def response = Json.read(clientOutput, BeaconResponseDto)
-        assertThat(response).isEqualTo(TEST_RESPONSE_AMPLAB)
 
+        if (mockedTesting) {
+            assertThat(response).isEqualTo(TEST_RESPONSE_AMPLAB)
+        }
         assertExitValueIsSuccessful(clientExitValue)
     }
 }

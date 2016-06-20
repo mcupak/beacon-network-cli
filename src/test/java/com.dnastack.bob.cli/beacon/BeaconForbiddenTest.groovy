@@ -16,13 +16,14 @@
 
 package com.dnastack.bob.cli.beacon
 
-import com.dnastack.bob.cli.BaseMockedCliTest
-import com.dnastack.bob.cli.commands.BeaconCommand
+import com.dnastack.bob.cli.BaseCliTest
+import com.dnastack.bob.cli.commands.beacon.BeaconCommand
+import com.dnastack.bob.cli.commands.beacon.BeaconGetCommand
 import com.github.tomakehurst.wiremock.common.Json
 import org.apache.http.HttpStatus
 
-import static com.dnastack.bob.cli.TestData.getTEST_BEACON_AMPLAB
-import static com.dnastack.bob.cli.TestData.getTEST_ERROR_FORBIDDEN
+import static com.dnastack.bob.cli.ITTestData.TEST_BEACON_AMPLAB
+import static com.dnastack.bob.cli.TestData.TEST_ERROR_FORBIDDEN
 import static com.dnastack.bob.client.BeaconNetworkRetroService.BEACONS_PATH
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.assertj.core.api.Assertions.assertThat
@@ -31,7 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat
  * @author Artem (tema.voskoboynick@gmail.com)
  * @version 1.0
  */
-class BeaconForbiddenTest extends BaseMockedCliTest {
+class BeaconForbiddenTest extends BaseCliTest {
+    @Override
     void setupMappings() {
         MOCK_BOB_SERVER.stubFor(get(urlEqualTo("/$BEACONS_PATH/$TEST_BEACON_AMPLAB.id"))
 
@@ -41,13 +43,20 @@ class BeaconForbiddenTest extends BaseMockedCliTest {
     }
 
     @Override
+    boolean isIntegrationTestingSupported() {
+        return false
+    }
+
+    @Override
     String[] getClientTestArguments() {
-        return [BeaconCommand.NAME, "-i", TEST_BEACON_AMPLAB.id]
+        return [BeaconCommand.NAME,
+                BeaconGetCommand.NAME,
+                BeaconGetCommand.BEACON_ID_OPTION_KEY, TEST_BEACON_AMPLAB.id]
     }
 
     @Override
     void doTest(String clientOutput, String clientErrorOutput, int clientExitValue) {
-        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.getMessage())
+        assertThat(clientErrorOutput?.trim()).isEqualTo(TEST_ERROR_FORBIDDEN.message)
         assertExitValueIsError(clientExitValue)
     }
 }
