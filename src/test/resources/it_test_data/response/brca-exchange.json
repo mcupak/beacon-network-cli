@@ -1,0 +1,45 @@
+{
+  "beacon": {
+    "id": "brca-exchange",
+    "name": "BRCA Exchange",
+    "organization": "BRCA Exchange",
+    "description": "Public variant annotations from BRCA Exchange.",
+    "createdDate": "2016-02-24",
+    "supportedReferences": [
+      "HG19"
+    ]
+  },
+  "query": {
+    "chromosome": "CHR17",
+    "position": 41244981,
+    "allele": "G",
+    "reference": "HG19"
+  },
+  "response": true,
+  "info": {
+    "Clinical_significance_citations": "PMID:21990134",
+    "HGVS_cDNA": "c.2566T>C",
+    "Condition_ID_type": "OMIM",
+    "Date_last_evaluated": "8/10/15",
+    "HGVS_protein": "p.(Tyr856His)",
+    "Assertion_method_citation": "http://enigmaconsortium.org/documents/ENIGMA_Rules_2015-03-26.pdf",
+    "ClinVarAccession": "SCV000244323",
+    "alt": "G",
+    "Condition_category": "Disease",
+    "Comment_on_clinical_significance": "IARC class based on posterior probability from multifactorial likelihood analysis, thresholds for class as per Plon et al. 2008 (PMID: 18951446). Class 1 based on posterior probability = 0.00018. Also class 1 based on frequency >1% in an outbred sampleset. Frequency 0.01399 (Asian), derived from 1000 genomes (2012-04-30).",
+    "Reference_sequence": "NM_007294.3",
+    "Gene_symbol": "BRCA1",
+    "URL": "http://hci-exlovd.hci.utah.edu/variants.php?select_db=BRCA1&action=search_all&search_Variant%2FDNA=c.2566T>C",
+    "chrom": "17",
+    "Abbrev_AA_change": "Y856H",
+    "ref": "A",
+    "Assertion_method": "ENIGMA BRCA1/2 Classification Criteria (2015)",
+    "BIC_Nomenclature": "2685T>C",
+    "Clinical_significance": "Benign",
+    "Genomic_Coordinate": "chr17:41244982:A>G",
+    "Allele_origin": "Germline",
+    "position": "41244982",
+    "Collection_method": "Curation",
+    "Condition_ID_value": "BREAST-OVARIAN CANCER, FAMILIAL, SUSCEPTIBILITY TO, 1; BROVCA1 (604370)"
+  }
+}
