@@ -8,6 +8,6 @@ branches:
     - develop
 before_install:
   - git clone https://github.com/mcupak/beacon-network-dto.git
-  - mvn install -q -f beacon-network-dto/pom.xml
+  - mvn install -q -f beacon-network-dto/pom.xml -DskipTests
   - git clone https://github.com/mcupak/beacon-network-client.git
-  - mvn install -q -f beacon-network-client/pom.xml
+  - mvn install -q -f beacon-network-client/pom.xml -DskipTests
