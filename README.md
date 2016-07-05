@@ -1,5 +1,5 @@
-# Beacon Network CLI (Command Line Interface)
-Java CLI client for accessing Beacon Network API.
+# Beacon Network CLI [![Build Status](https://travis-ci.org/mcupak/beacon-network-cli.svg?branch=develop)](https://travis-ci.org/mcupak/beacon-network-cli) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/mcupak/beacon-network-cli/develop/LICENSE)
+Command line client for accessing Beacon Network API.
 
 ## Requirements
 ### Beacon Network Client
